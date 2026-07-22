@@ -1,0 +1,163 @@
+﻿@model IEnumerable<AzureCinemaHub.Models.Movie>
+
+@{
+    ViewData["Title"] = "Каталог фільмів";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<style>
+    body {
+        background-color: #121216;
+        color: #f3f4f6;
+    }
+
+    .hero-section {
+        background: #18181c;
+        border: 1px solid rgba(244, 114, 182, 0.2);
+        border-radius: 1.25rem;
+        padding: 2.5rem;
+        margin-bottom: 2.5rem;
+        box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(244, 114, 182, 0.05);
+    }
+
+    .movie-card {
+        background: #18181c;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 1.25rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        overflow: hidden;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .movie-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.6), 0 0 15px rgba(244, 114, 182, 0.3);
+        border-color: rgba(244, 114, 182, 0.5);
+    }
+
+    .movie-body {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+    .movie-title {
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: #ffffff;
+        margin-bottom: 0.75rem;
+    }
+
+    .movie-desc {
+        color: #9ca3af;
+        font-size: 0.925rem;
+        line-height: 1.6;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+        flex-grow: 1;
+    }
+
+    .btn-watch {
+        background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
+        color: #ffffff;
+        border: none;
+        border-radius: 0.6rem;
+        font-weight: 600;
+        padding: 0.55rem 1.25rem;
+        transition: all 0.2s ease;
+    }
+
+    .btn-watch:hover {
+        background: linear-gradient(135deg, #f472b6 0%, #db2777 100%);
+        color: #ffffff;
+        box-shadow: 0 0 15px rgba(244, 114, 182, 0.5);
+    }
+
+    .btn-add {
+        background: rgba(244, 114, 182, 0.15);
+        color: #f472b6;
+        border: 1px solid rgba(244, 114, 182, 0.4);
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        transition: all 0.2s ease;
+    }
+
+    .btn-add:hover {
+        background: #f472b6;
+        color: #121216;
+        box-shadow: 0 0 15px rgba(244, 114, 182, 0.4);
+    }
+
+    .pink-icon {
+        color: #f472b6;
+    }
+</style>
+
+<div class="container py-4">
+    <!-- Hero Banner -->
+    <div class="hero-section d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <h1 class="display-5 fw-bold text-white mb-2">
+                <i class="bi bi-film pink-icon me-2"></i>Azure Cinema Hub
+            </h1>
+            <p class="text-secondary mb-0">Приватна бібліотека відео в хмарі Azure</p>
+        </div>
+        <div>
+            <a asp-action="Create" class="btn btn-add d-inline-flex align-items-center gap-2">
+                <i class="bi bi-plus-lg"></i> Додати новий фільм
+            </a>
+        </div>
+    </div>
+
+    <!-- Movies Grid -->
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-camera-video pink-icon fs-1 d-block mb-3"></i>
+            <h5>Поки що немає доданих фільмів</h5>
+            <p>Натисніть кнопку вище, щоб завантажити перше відео!</p>
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col">
+                    <div class="movie-card">
+                        <div class="movie-body">
+                            <h3 class="movie-title">@item.Title</h3>
+                            <p class="movie-desc">@item.Description</p>
+                            
+                            <div class="pt-3 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar3 pink-icon me-1"></i>@item.CreatedAt.ToString("dd.MM.yyyy")
+                                </small>
+
+                                <div class="d-flex gap-2 align-items-center">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-watch d-inline-flex align-items-center gap-1">
+                                        <i class="bi bi-play-fill fs-5"></i> Дивитися
+                                    </a>
+
+                                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Видалити цей фільм?');">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm p-2" style="border-radius: 0.6rem;" title="Видалити">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

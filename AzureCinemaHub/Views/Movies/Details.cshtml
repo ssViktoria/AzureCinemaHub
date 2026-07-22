@@ -1,0 +1,139 @@
+﻿@model AzureCinemaHub.Models.Movie
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<style>
+    body {
+        background-color: #121216;
+        color: #f3f4f6;
+    }
+
+    .btn-back {
+        background: rgba(244, 114, 182, 0.1);
+        color: #f472b6;
+        border: 1px solid rgba(244, 114, 182, 0.3);
+        border-radius: 0.75rem;
+        padding: 0.5rem 1.25rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .btn-back:hover {
+        background: #f472b6;
+        color: #121216;
+        box-shadow: 0 0 15px rgba(244, 114, 182, 0.4);
+    }
+
+    .player-container {
+        background: #18181c;
+        border: 1px solid rgba(244, 114, 182, 0.15);
+        border-radius: 1.25rem;
+        padding: 1rem;
+        box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.6), 0 0 20px rgba(244, 114, 182, 0.05);
+        overflow: hidden;
+    }
+
+    video {
+        width: 100%;
+        max-height: 550px;
+        border-radius: 0.85rem;
+        outline: none;
+        background-color: #000;
+        display: block;
+    }
+
+    .info-card {
+        background: #18181c;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 1.25rem;
+        padding: 2rem;
+        margin-top: 1.5rem;
+    }
+
+    .movie-title {
+        color: #ffffff;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+    }
+
+    .pink-badge {
+        background: rgba(244, 114, 182, 0.15);
+        color: #f472b6;
+        border: 1px solid rgba(244, 114, 182, 0.3);
+        padding: 0.35rem 0.85rem;
+        border-radius: 2rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .section-label {
+        color: #f472b6;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+    }
+
+    .movie-description {
+        color: #9ca3af;
+        font-size: 1.05rem;
+        line-height: 1.7;
+    }
+</style>
+
+<div class="container py-4" style="max-width: 960px;">
+    <!-- Верхня панель дій -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <a asp-action="Index" class="btn btn-back d-inline-flex align-items-center gap-2">
+            <i class="bi bi-arrow-left"></i> Назад до каталогу
+        </a>
+
+        <div class="d-flex align-items-center gap-2">
+            <span class="pink-badge">
+                <i class="bi bi-calendar3 me-1"></i> @Model.CreatedAt.ToString("dd.MM.yyyy")
+            </span>
+
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Ви дійсно хочете видалити цей фільм?');">
+                <button type="submit" class="btn btn-outline-danger d-inline-flex align-items-center gap-1" style="border-radius: 0.75rem;">
+                    <i class="bi bi-trash"></i> Видалити
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Відеоплеєр -->
+    <div class="player-container mb-4">
+        @if (!string.IsNullOrEmpty(ViewBag.SasUrl as string))
+        {
+            <video controls preload="metadata" src="@ViewBag.SasUrl">
+                Ваш браузер не підтримує відтворення відео.
+            </video>
+        }
+        else
+        {
+            <div class="text-center py-5 text-danger">
+                <i class="bi bi-exclamation-triangle fs-1 d-block mb-2"></i>
+                <p class="mb-0">Не вдалося завантажити відеофайл з Azure Blob Storage.</p>
+            </div>
+        }
+    </div>
+
+    <!-- Деталі фільму -->
+    <div class="info-card">
+        <h1 class="movie-title display-6 mb-3">@Model.Title</h1>
+        
+        <div class="mb-3">
+            <span class="section-label">
+                <i class="bi bi-file-text me-1"></i> Опис фільму
+            </span>
+        </div>
+        
+        <p class="movie-description mb-0">
+            @Model.Description
+        </p>
+    </div>
+</div>
